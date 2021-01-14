@@ -2,13 +2,15 @@ import { firestore } from "../firebaseConfig"
 
 class UserService {
   async getUserData(userId) {
-    const docRef = firestore.collection("users").doc(userId)
-    const doc = await docRef.get()
-    if (!doc.exists) {
-      return null
-    } else {
-      return doc.data()
-    }
+    const querySnapshot = await firestore.collection("users").where("uid", "==", userId)
+        .get()
+    let data = []
+    querySnapshot.forEach((doc) => {
+      data.push(doc.data())
+    })
+    if (data.length > 0)
+      return data[0]
+    return null
   }
 
   async getUserName(userId) {

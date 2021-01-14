@@ -1,8 +1,8 @@
 import { firestore } from "../firebaseConfig"
 
 class ContactsService {
-    async fetchContacts(user) {
-        const docRef = await firestore.collection(`contacts`).doc(user).get()
+    async fetchContacts(userId) {
+        const docRef = await firestore.collection(`contacts`).where("user", "==", userId).get()
         return docRef.data()
     }
 
@@ -13,7 +13,8 @@ class ContactsService {
         console.log("DATA", docRef.data())
         return docRef.data()
     }
-    badContactListener(myId, user, contactsCallback = () => {}) {
+    async badContactListener(myId, user, contactsCallback = () => {}) {
+        console.log(myId)
         return firestore
             .collection("contacts")
             .where("user", "==", `${myId}`)
@@ -23,9 +24,10 @@ class ContactsService {
                     let data = {
                         ...doc.data()
                     }
+                    console.log(data)
                     let flag = false;
                     for (let contact of data.contacts) {
-                        if (contact.name === user) {
+                        if (contact.nickname.includes(user)) {
                             data.contacts = [contact];
                             flag = true;
                             break;
@@ -41,7 +43,7 @@ class ContactsService {
             })
     }
 
-    contactsListener(myId, limit = 10, contactsCallback = () => {}) {
+    async contactsListener(myId, limit = 10, contactsCallback = () => {}) {
         console.log(myId)
         return firestore
             .collection("contacts")
@@ -60,6 +62,13 @@ class ContactsService {
             })
     }
 
+    async initContacts(myId) {
+        const data = {
+            contacts: [],
+            user: myId
+        }
+        await firestore.collection("contacts").add(data)
+    }
 
 }
 export let contactsService = new ContactsService()

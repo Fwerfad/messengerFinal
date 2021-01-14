@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useReducer} from "react";
+import React, {Fragment, useEffect, useReducer, useState} from "react";
 import {
     List,
     ListItem,
@@ -15,10 +15,12 @@ import { chatsService } from "../../services/ChatsService"
 import {fetchMessages} from "../../store/actions/chats/chats";
 import { store } from "../../index"
 import { firebase, uiConfig } from "./../../firebaseConfig"
+import {userService} from "../../services/UserService";
+import {refreshEnabled} from "../../store/actions/contacts/contacts";
 
 
 
-export const ContactsList = (props) => {
+const ContactsList = (props) => {
     const myId = firebase.auth().currentUser.providerData[0].uid
     let history = useHistory();
     console.log(store.getState().contactsReducer.refresh)
@@ -30,12 +32,17 @@ export const ContactsList = (props) => {
             store.dispatch(respond)})
         history.push("/Chat")
     }
-
-    useEffect(() => {
-        if (props.contacts.length === 0 && props.refresh === true) {
-            props.fetchContacts(myId, 10)
-        }
-    })
+    console.log(props)
+    if (props.refresh === true && props.contacts.length === 0) {
+        props.fetchContacts(myId, 10)
+        disableRefresh();
+    }
+    // useEffect(() => {
+    //     if (props.refresh === true) {
+    //         props.fetchContacts(myId, 10)
+    //         console.log("loaded contacts")
+    //     }
+    // })
 
     function enableRefresh() {
         console.log("Back in to the game!")
@@ -51,42 +58,48 @@ export const ContactsList = (props) => {
         console.log(props)
     }
 
-    console.log("PROPS", props)
-    const listItems = props.contacts.map((user) =>
-        <Fragment key={user.name}>
-            <ListItem className={classes.listItem}
-                      alignItems="flex-start">
-                <ListItemAvatar>
-                    <Avatar src={user.avatar} alt={'avatar'}/>
-                </ListItemAvatar>
-                <ListItemText onMouseDown={() => {moveToChat(user, history)}}
-                              className={classes.listItemText}
-                              primary={
-                                  <Typography className={classes.contactNameText}>
-                                      {user.name}
-                                  </Typography>
-                              }
-                              secondary={
-                                  <Typography className={classes.contactDescriptionText}>
-                                      {user.description}
-                                  </Typography>
-                              }>
-                </ListItemText>
-                <ListItemText className={classes.contactLastMessageText}>
-                    <React.Fragment>
-                        <Typography className={classes.contactLastMessageHeader}
-                                    display="inline">
-                            Last message
-                        </Typography>
-                        <Typography className={classes.contactLastMessageContent}
-                                    display="block">
-                            {user.lastMessage}
-                        </Typography>
-                    </React.Fragment>
-                </ListItemText>
-            </ListItem>
-        </Fragment>
-    );
+
+    let listItems = ""
+    if (props.contacts !== undefined) {
+        console.log(props.contacts)
+        listItems = props.contacts.map((user) =>
+            <Fragment key={user.nickname}>
+                <ListItem className={classes.listItem}
+                          alignItems="flex-start">
+                    <ListItemAvatar>
+                        <Avatar src={user.avatar} alt={'avatar'}/>
+                    </ListItemAvatar>
+                    <ListItemText onMouseDown={() => {moveToChat(user, history)}}
+                                  className={classes.listItemText}
+                                  primary={
+                                      <Typography className={classes.contactNameText}>
+                                          {user.nickname}
+                                      </Typography>
+                                  }
+                                  secondary={
+                                      <Typography className={classes.contactDescriptionText}>
+                                          {user.description}
+                                      </Typography>
+                                  }>
+                    </ListItemText>
+                    <ListItemText className={classes.contactLastMessageText}>
+                        <React.Fragment>
+                            <Typography className={classes.contactLastMessageHeader}
+                                        display="inline">
+                                Last message
+                            </Typography>
+                            <Typography className={classes.contactLastMessageContent}
+                                        display="block">
+                                {user.lastMessage}
+                            </Typography>
+                        </React.Fragment>
+                    </ListItemText>
+                </ListItem>
+            </Fragment>
+        );
+
+    }
+    console.log(listItems)
     return (
         <List className={classes.container}>
             {listItems}
@@ -97,8 +110,8 @@ export const ContactsList = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchContacts: (user, limit) =>
-            dispatch(contactsActions.fetchContacts(user, limit)),
+        fetchContacts: (userId, limit) =>
+            dispatch(contactsActions.fetchContacts(userId, limit)),
         refreshEnabled: () =>
             dispatch(contactsActions.refreshEnabled()),
         refreshDisabled: () =>

@@ -10,18 +10,18 @@ import {
 import {connect} from "react-redux";
 import * as authActions from "./store/actions/auth/auth"
 import Chat from "./Components/chat/Chat";
-import {ContactsList} from "./Components/сontactList/contacts";
+import ContactsList from "./Components/сontactList/contacts";
 import Layout from "./Components/layout/layoutContainer";
 import Profile from "./Components/profile/profile";
 import SearchForm from "./Components/search/contactSearch/search";
 import {authService} from "./services/AuthService";
+import {contactsService} from "./services/ContactsService";
 
 
 class App extends React.Component {
   // TODO move isSignedIn to redux
   state = {
     isLoggedOn: false,
-    currentUser: null,
   }
 
   componentDidMount() {
@@ -49,6 +49,7 @@ class App extends React.Component {
     authService.login(auth.currentUser.providerData[0]).then((e) => {
       if (e == null) {
         authService.register(auth.currentUser.providerData[0])
+        contactsService.initContacts(auth.currentUser.providerData[0].uid)
       }
     })
 

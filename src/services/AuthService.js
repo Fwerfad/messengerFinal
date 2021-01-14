@@ -15,10 +15,13 @@ class AuthService {
         return null
     }
     async register(user) {
+        console.log(user)
         const data = {
             nickname: user.displayName,
             email: user.email,
-            uid: user.uid
+            uid: user.uid,
+            avatar: user.photoURL,
+            description: "New user"
         }
         await firestore
             .collection('users')

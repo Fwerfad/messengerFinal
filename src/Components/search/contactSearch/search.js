@@ -8,6 +8,7 @@ import { store } from "../../../index";
 import { contactsService } from "../../../services/ContactsService"
 import {default as contactsActions, fetchContact} from "../../../store/actions/contacts/contacts";
 import { ContactsList } from "../../сontactList/contacts";
+import {firebase} from "../../../firebaseConfig";
 
 export const SearchForm = () => {
     return (
@@ -22,7 +23,7 @@ function InputField() {
     function handleClick(ev) {
         if (ev.key === 'Enter') {
             console.log("TEXTFIELDVALUE", textFieldValue)
-            store.dispatch(fetchContact(store.getState().contactsReducer.user, textFieldValue))
+            store.dispatch(fetchContact(firebase.auth().currentUser.providerData[0].uid, textFieldValue))
         }
     }
     function handle(ev) {

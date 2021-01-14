@@ -33,11 +33,15 @@ export const SidePanel = (props) => {
   props.fetchMessages(chatId, 10)
   })
 
-  if (props.chats.length === 0 && refresh) {
-    setRefresh(false)
-    props.fetchCharts(firebase.auth().currentUser.providerData[0].uid, 10)
-    console.log(props.chats)
-  }
+
+  useEffect(() => {
+    if (refresh) {
+      setRefresh(false)
+      props.fetchCharts(firebase.auth().currentUser.providerData[0].uid, 10)
+      console.log(props.chats)
+    }
+  })
+
 
   function addChat() {
     handleOpen(!open);

@@ -9,12 +9,11 @@ class MessagesServise {
       text: text,
       date: Timestamp.fromDate(new Date()),
     }
-
-    await firestore
-      .collection(`chats`)
-      .doc(chatId)
-      .collection("messages")
-      .add(data)
+    const  querySnapshot = await firestore
+        .collection(`chats`)
+        .doc(chatId)
+      querySnapshot.update({lastActivity: data.date})
+      querySnapshot.collection("messages").add(data)
   }
 
   messagesListener(chatId, limit = 2, messagesCallback = () => {}) {

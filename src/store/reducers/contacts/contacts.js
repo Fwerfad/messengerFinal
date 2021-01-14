@@ -15,7 +15,7 @@ const reducer = (state = initialState, action) => {
                 user: action.contacts[0].user,
                 loading: false,
                 contacts: action.contacts[0].contacts,
-                refresh: true
+                refresh: false
             })
         case actionTypes.FETCH_CONTACTS_FAIL:
             return updateObject(state, {loading: false})
