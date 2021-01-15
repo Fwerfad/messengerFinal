@@ -38,6 +38,11 @@ function Chat(props) {
   }
 
   const myId = firebase.auth().currentUser.providerData[0].uid
+  const enter = (e) => {
+    if(e.keyCode === 13) {
+      onSend()
+    }
+  }
   const onSend = (e) => {
     if (text !== "") {
       messagesService.sendMessage(myId, props.chatID, text)
@@ -51,6 +56,7 @@ function Chat(props) {
       <div className={classes.messageInputContainer}>
         <input
           onChange={onChangeText}
+          onKeyDown={enter}
           type="text"
           className={classes.messageText}
           placeholder="Message..."

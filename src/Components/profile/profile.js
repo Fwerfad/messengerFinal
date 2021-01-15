@@ -10,10 +10,10 @@ import {
   ExpansionPanelSummary,
 } from "@material-ui/core";
 import useStyles from "./profileStyles.js";
+import {firebase} from "../../firebaseConfig";
 
 export function Profile() {
   const classes = useStyles();
-
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -29,7 +29,7 @@ export function Profile() {
                 <Avatar
                   className={classes.avatar}
                   alt="complex"
-                  src="https://via.placeholder.com/150"
+                  src={firebase.auth().currentUser.providerData[0].photoURL}
                 />
               </Grid>
               <Grid item sm container>
@@ -66,6 +66,7 @@ export function Profile() {
                   id="standard-basic"
                   label="Your publick nickname"
                   fullWidth
+                  value={firebase.auth().currentUser.providerData[0].displayName}
                 />
               </Grid>
               <Grid item>
@@ -175,4 +176,6 @@ export function Profile() {
     </Grid>
   );
 }
+
+
 export default Profile

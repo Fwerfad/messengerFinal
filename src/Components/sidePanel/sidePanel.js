@@ -37,7 +37,7 @@ export const SidePanel = (props) => {
   useEffect(() => {
     if (refresh) {
       setRefresh(false)
-      props.fetchCharts(firebase.auth().currentUser.providerData[0].uid, 10)
+      props.fetchChats(firebase.auth().currentUser.providerData[0].uid, 10)
       console.log(props.chats)
     }
   })
@@ -118,7 +118,7 @@ export const SidePanel = (props) => {
 
 export const mapDispatchToProps = (dispatch) => {
   return {
-    fetchCharts: (id, chatsNum) =>
+    fetchChats: (id, chatsNum) =>
         dispatch(chatsActions.fetchChats(id, chatsNum)),
     fetchMessages: (id, limit) =>
         dispatch(chatsActions.fetchMessages(id, limit))
